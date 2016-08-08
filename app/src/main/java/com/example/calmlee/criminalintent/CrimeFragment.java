@@ -25,12 +25,13 @@ public class CrimeFragment extends Fragment {
     private EditText mCrimeTitle;
     private Button mCrimeDate;
     private CheckBox mCrimeSolved;
+    private static final String ARG_CRIME_ID = "crime_id";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //初始化mCrime
-        UUID crimeId = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
+        UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getContext()).getCrime(crimeId);
     }
 
@@ -76,6 +77,14 @@ public class CrimeFragment extends Fragment {
         return view;
     }
 
-
+    public static Fragment newInstance(UUID crimeId){
+        CrimeFragment fragment = new CrimeFragment();
+        //定义一个Bundle实例
+        Bundle args = new Bundle();
+        //作为fragment的一个argument
+        args.putSerializable(ARG_CRIME_ID,crimeId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
 }

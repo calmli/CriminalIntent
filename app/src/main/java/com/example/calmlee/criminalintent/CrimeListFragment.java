@@ -52,7 +52,6 @@ public class CrimeListFragment extends Fragment{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("CrimeListFragment",mCrime.getmId().toString());
                     Intent intent = CrimeActivity.newIntent(getActivity(),mCrime.getmId());
                     startActivity(intent);
                 }
@@ -61,7 +60,6 @@ public class CrimeListFragment extends Fragment{
 
         public void bindCrime(Crime crime){
            mCrime = crime;
-           // Log.d("Text",mCrime.toString());
            this.mTitle.setText(crime.getmTitle());
            this.mDate.setText(crime.getmDate().toString());
            this.mSolved.setChecked(crime.ismSolved());
