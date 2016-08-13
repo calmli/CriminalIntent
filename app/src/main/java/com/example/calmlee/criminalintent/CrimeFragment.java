@@ -1,8 +1,11 @@
 package com.example.calmlee.criminalintent;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ public class CrimeFragment extends Fragment {
     private Button mCrimeDate;
     private CheckBox mCrimeSolved;
     private static final String ARG_CRIME_ID = "crime_id";
+    private static final String DIALOG_DATE = "DialogDate";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +51,6 @@ public class CrimeFragment extends Fragment {
         mCrimeSolved = (CheckBox) view.findViewById(R.id.crime_solved);
         mCrimeSolved.setChecked(mCrime.ismSolved());
         mCrimeDate.setText(mCrime.getmDate().toString());
-        mCrimeDate.setEnabled(false);
 
         //设置事件
         mCrimeTitle.addTextChangedListener(new TextWatcher() {
@@ -67,12 +70,23 @@ public class CrimeFragment extends Fragment {
 
             }
         });
+
         mCrimeSolved.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setmSolved(isChecked);
             }
         });
+
+        mCrimeDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                DatePickerFragment dialog = new DatePickerFragment();
+                dialog.show(manager,DIALOG_DATE);
+            }
+        });
+
         return view;
     }
 
