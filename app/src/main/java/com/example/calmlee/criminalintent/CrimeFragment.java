@@ -1,9 +1,9 @@
 package com.example.calmlee.criminalintent;
 
-import android.app.AlertDialog;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -29,6 +30,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mCrimeSolved;
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final int REQUEST_DATE = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class CrimeFragment extends Fragment {
         mCrimeDate = (Button) view.findViewById(R.id.crime_date);
         mCrimeSolved = (CheckBox) view.findViewById(R.id.crime_solved);
         mCrimeSolved.setChecked(mCrime.ismSolved());
-        mCrimeDate.setText(mCrime.getmDate().toString());
+        updateDate();
 
         //设置事件
         mCrimeTitle.addTextChangedListener(new TextWatcher() {
@@ -81,8 +83,15 @@ public class CrimeFragment extends Fragment {
         mCrimeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = new DatePickerFragment();
+                //获得托管Activity的FragmentManager对象，并将DatePickerFragment也托管在同一个Activity中
+                //也就是说同个Activity托管两个Fragment
+                FragmentManager manager = getFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getmDate());
+
+                //为dialog设置返回数据的目标Fragment
+                //设置返回数据的目标Fragment可以方便调用getTargetFragment()和getTargetRequestCode()
+                dialog.setTargetFragment(CrimeFragment.this,REQUEST_DATE);
+
                 dialog.show(manager,DIALOG_DATE);
             }
         });
@@ -100,5 +109,19 @@ public class CrimeFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        if (requestCode == REQUEST_DATE){
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setmDate(date);
+            updateDate();
+        }
+    }
 
+    private void updateDate() {
+        mCrimeDate.setText(mCrime.getmDate().toString());
+    }
 }
